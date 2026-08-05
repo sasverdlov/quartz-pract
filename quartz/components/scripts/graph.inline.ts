@@ -275,39 +275,37 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     })
   }
 
-  function renderLabels() {
+  const renderLabels = () => {
     tweens.get("label")?.stop()
     const tweenGroup = new TweenGroup()
 
     const defaultScale = 1 / scale
+    const relatedScale = defaultScale * 1.04
     const activeScale = defaultScale * 1.1
+
     for (const n of nodeRenderData) {
       const nodeId = n.simulationData.id
+      const isHovered = hoveredNodeId === nodeId
+      const isRelated = hoveredNodeId !== null && n.active && !isHovered
 
-      n.label.style.fill =
-        hoveredNodeId === nodeId ? computedStyleMap["--dark"] : computedStyleMap["--gray"]
+      const alpha = isHovered ? 1 : isRelated ? 0.95 : 0.8
+      const labelScale = isHovered ? activeScale : isRelated ? relatedScale : defaultScale
 
-      if (hoveredNodeId === nodeId) {
-        tweenGroup.add(
-          new Tweened<Text>(n.label).to(
-            {
-              alpha: 1,
-              scale: { x: activeScale, y: activeScale },
-            },
-            100,
-          ),
-        )
-      } else {
-        tweenGroup.add(
-          new Tweened<Text>(n.label).to(
-            {
-              alpha: 0.8,
-              scale: { x: defaultScale, y: defaultScale },
-            },
-            100,
-          ),
-        )
-      }
+      n.label.style.fill = isHovered
+        ? computedStyleMap["--dark"]
+        : isRelated
+          ? computedStyleMap["--darkgray"]
+          : computedStyleMap["--gray"]
+
+      tweenGroup.add(
+        new Tweened<Text>(n.label).to(
+          {
+            alpha,
+            scale: { x: labelScale, y: labelScale },
+          },
+          100,
+        ),
+      )
     }
 
     tweenGroup.getAll().forEach((tw) => tw.start())
