@@ -1,3 +1,4 @@
+import yandexMetricaScript from "./scripts/yandexMetrica.inline"
 import { i18n } from "../i18n"
 import { FullSlug, getFileExtension, joinSegments, pathToRoot } from "../util/path"
 import { CSSResourceToStyleElement, JSResourceToScriptElement } from "../util/resources"
@@ -100,6 +101,8 @@ export default (() => {
       </head>
     )
   }
+
+  Head.afterDOMLoaded = yandexMetricaScript
 
   return Head
 }) satisfies QuartzComponentConstructor
