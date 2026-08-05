@@ -33,6 +33,36 @@ if [[ ! -f content/README.md ]]; then
 fi
 
 cp content/README.md content/index.md
-
 echo "Created content/index.md from content/README.md"
+
+ICON_SOURCE="content/desert rose.png"
+ICON_DEST="quartz/static/icon.png"
+
+if [[ ! -f "$ICON_SOURCE" ]]; then
+  echo "ERROR: $ICON_SOURCE was not found"
+  exit 1
+fi
+
+mkdir -p quartz/static
+
+node --input-type=module <<'NODE'
+import sharp from "sharp"
+
+await sharp("content/desert rose.png")
+  .resize(256, 256, {
+    fit: "contain",
+    background: {
+      r: 0,
+      g: 0,
+      b: 0,
+      alpha: 0,
+    },
+  })
+  .png({
+    compressionLevel: 9,
+  })
+  .toFile("quartz/static/icon.png")
+NODE
+
+echo "Created 256x256 favicon at ${ICON_DEST}"
 echo "Wiki materials downloaded successfully"
