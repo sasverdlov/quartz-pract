@@ -27,9 +27,12 @@ git clone \
 
 rm -rf content/.git
 
-if [[ ! -f content/index.md ]]; then
-  echo "ERROR: content/index.md was not found"
+if [[ ! -f content/README.md ]]; then
+  echo "ERROR: content/README.md was not found"
   exit 1
 fi
 
+cp content/README.md content/index.md
+
+echo "Created content/index.md from content/README.md"
 echo "Wiki materials downloaded successfully"
