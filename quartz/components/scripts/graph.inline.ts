@@ -297,6 +297,8 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
           ? computedStyleMap["--darkgray"]
           : computedStyleMap["--gray"]
 
+      n.label.style.fontWeight = isHovered ? "700" : "400"
+
       tweenGroup.add(
         new Tweened<Text>(n.label).to(
           {
