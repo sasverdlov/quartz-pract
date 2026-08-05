@@ -284,6 +284,9 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     for (const n of nodeRenderData) {
       const nodeId = n.simulationData.id
 
+      n.label.style.fill =
+        hoveredNodeId === nodeId ? computedStyleMap["--dark"] : computedStyleMap["--gray"]
+
       if (hoveredNodeId === nodeId) {
         tweenGroup.add(
           new Tweened<Text>(n.label).to(
@@ -298,7 +301,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
         tweenGroup.add(
           new Tweened<Text>(n.label).to(
             {
-              alpha: n.label.alpha,
+              alpha: 0.8,
               scale: { x: defaultScale, y: defaultScale },
             },
             100,
@@ -378,11 +381,11 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       interactive: false,
       eventMode: "none",
       text: n.text,
-      alpha: 0,
+      alpha: 0.8,
       anchor: { x: 0.5, y: 1.2 },
       style: {
         fontSize: fontSize * 15,
-        fill: computedStyleMap["--dark"],
+        fill: computedStyleMap["--gray"],
         fontFamily: computedStyleMap["--bodyFont"],
       },
       resolution: window.devicePixelRatio * 4,
@@ -516,7 +519,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
 
           for (const label of labelsContainer.children) {
             if (!activeNodes.includes(label)) {
-              label.alpha = scaleOpacity
+              label.alpha = Math.max(scaleOpacity, 0.8)
             }
           }
         }),
