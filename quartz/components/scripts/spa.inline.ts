@@ -187,6 +187,7 @@ function createRouter() {
   })()
 }
 
+normalizeRelativeURLs(document, window.location.href)
 createRouter()
 notifyNav(getFullSlug(window))
 

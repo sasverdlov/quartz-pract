@@ -114,13 +114,32 @@ const _rebaseHtmlElement = (el: Element, attr: string, newBase: string | URL) =>
   const rebased = new URL(el.getAttribute(attr)!, newBase)
   el.setAttribute(attr, rebased.pathname + rebased.hash)
 }
-export function normalizeRelativeURLs(el: Element | Document, destination: string | URL) {
+export const normalizeRelativeURLs = (el: Element | Document, destination: string | URL) => {
   el.querySelectorAll('[href=""], [href^="./"], [href^="../"]').forEach((item) =>
     _rebaseHtmlElement(item, "href", destination),
   )
+
   el.querySelectorAll('[src=""], [src^="./"], [src^="../"]').forEach((item) =>
     _rebaseHtmlElement(item, "src", destination),
   )
+
+  el.querySelectorAll<HTMLAnchorElement>("a.internal[data-slug]").forEach((item) => {
+    const slug = item.dataset.slug
+    if (!slug) return
+
+    const currentHref = item.getAttribute("href") ?? ""
+    const hashIndex = currentHref.indexOf("#")
+    const hash = hashIndex >= 0 ? currentHref.slice(hashIndex) : ""
+
+    const targetPath =
+      slug === "index"
+        ? "/"
+        : slug.endsWith("/index")
+          ? `/${slug.slice(0, -"/index".length)}/`
+          : `/${slug}`
+
+    item.setAttribute("href", `${encodeURI(targetPath)}${hash}`)
+  })
 }
 
 const _rebaseHastElement = (
